@@ -1,6 +1,7 @@
 package entities
 
 import (
+	"io"
 	"net"
 
 	"github.com/containers/image/v5/types"
@@ -54,6 +55,9 @@ type PlayKubeOptions struct {
 	LogOptions []string
 	// Start - don't start the pod if false
 	Start types.OptionalBool
+	// Body is a reader to read the body of the request from.
+	// Overrides the "path" variable if set.
+	Body io.Reader
 }
 
 // PlayKubePod represents a single pod and associated containers created by play kube
@@ -87,7 +91,11 @@ type PlayKubeReport struct {
 }
 
 // PlayKubeDownOptions are options for tearing down pods
-type PlayKubeDownOptions struct{}
+type PlayKubeDownOptions struct {
+	// Body is a reader to read the body of the request from.
+	// Overrides the "path" variable if set.
+	Body io.Reader
+}
 
 // PlayKubeDownReport contains the results of tearing down play kube
 type PlayKubeTeardown struct {

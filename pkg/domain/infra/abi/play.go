@@ -37,8 +37,15 @@ func (ic *ContainerEngine) PlayKube(ctx context.Context, path string, options en
 	report := &entities.PlayKubeReport{}
 	validKinds := 0
 
-	// read yaml document
-	content, err := ioutil.ReadFile(path)
+	var content []byte
+	var err error
+	if body := options.Body; body != nil {
+		// read body io.reader
+		content, err = ioutil.ReadAll(body)
+	} else {
+		// read yaml document
+		content, err = ioutil.ReadFile(path)
+	}
 	if err != nil {
 		return nil, err
 	}

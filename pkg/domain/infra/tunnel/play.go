@@ -29,6 +29,10 @@ func (ic *ContainerEngine) PlayKube(ctx context.Context, path string, opts entit
 	return play.Kube(ic.ClientCtx, path, options)
 }
 
-func (ic *ContainerEngine) PlayKubeDown(ctx context.Context, path string, _ entities.PlayKubeDownOptions) (*entities.PlayKubeReport, error) {
+func (ic *ContainerEngine) PlayKubeDown(ctx context.Context, path string, opts entities.PlayKubeDownOptions) (*entities.PlayKubeReport, error) {
+	if opts.Body != nil {
+		return play.KubeDownWithBody(ctx, opts.Body)
+	}
+
 	return play.KubeDown(ic.ClientCtx, path)
 }
