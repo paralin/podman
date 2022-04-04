@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/containers/podman/v4/libpod"
-	"github.com/containers/podman/v4/libpod/shutdown"
 	"github.com/containers/podman/v4/pkg/api/handlers"
 	"github.com/containers/podman/v4/pkg/api/server/idle"
 	"github.com/containers/podman/v4/pkg/api/types"
@@ -189,16 +188,6 @@ func (s *APIServer) setupSystemd() {
 func (s *APIServer) Serve() error {
 	s.setupPprof()
 
-	if err := shutdown.Register("service", func(sig os.Signal) error {
-		return s.Shutdown(true)
-	}); err != nil {
-		return err
-	}
-	// Start the shutdown signal handler.
-	if err := shutdown.Start(); err != nil {
-		return err
-	}
-
 	go func() {
 		<-s.idleTracker.Done()
 		logrus.Debugf("API service(s) shutting down, idle for %ds", int(s.idleTracker.Duration.Seconds()))
@@ -219,7 +208,19 @@ func (s *APIServer) Serve() error {
 		errChan <- nil
 	}()
 
-	return <-errChan
+	var err error
+	select {
+	case <-s.Context.Done():
+		err = context.Canceled
+	case err = <-errChan:
+	}
+
+	shutdownErr := s.Shutdown(true)
+	if shutdownErr != nil && (err == nil || err == context.Canceled) {
+		err = shutdownErr
+	}
+
+	return err
 }
 
 // setupPprof enables pprof default endpoints
