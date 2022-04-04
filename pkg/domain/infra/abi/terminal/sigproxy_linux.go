@@ -7,7 +7,6 @@ import (
 
 	"github.com/containers/podman/v4/libpod"
 	"github.com/containers/podman/v4/libpod/define"
-	"github.com/containers/podman/v4/libpod/shutdown"
 	"github.com/containers/podman/v4/pkg/signal"
 	"github.com/sirupsen/logrus"
 )
@@ -18,10 +17,6 @@ const signalBufferSize = 2048
 
 // ProxySignals ...
 func ProxySignals(ctr *libpod.Container) {
-	// Stop catching the shutdown signals (SIGINT, SIGTERM) - they're going
-	// to the container now.
-	shutdown.Stop() //nolint: errcheck
-
 	sigBuffer := make(chan os.Signal, signalBufferSize)
 	signal.CatchAll(sigBuffer)
 
