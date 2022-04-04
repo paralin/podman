@@ -389,9 +389,7 @@ func makeRuntime(runtime *Runtime) (retErr error) {
 
 	// Set up containers/storage
 	var store storage.Store
-	if needsUserns {
-		logrus.Debug("Not configuring container store")
-	} else if runtime.noStore {
+	if runtime.noStore {
 		logrus.Debug("No store required. Not opening container store.")
 	} else if err := runtime.configureStore(); err != nil {
 		return err
