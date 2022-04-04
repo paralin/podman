@@ -16,7 +16,6 @@ import (
 	cutil "github.com/containers/common/pkg/util"
 	"github.com/containers/podman/v4/libpod/define"
 	"github.com/containers/podman/v4/libpod/events"
-	"github.com/containers/podman/v4/libpod/shutdown"
 	"github.com/containers/podman/v4/pkg/domain/entities/reports"
 	"github.com/containers/podman/v4/pkg/rootless"
 	"github.com/containers/podman/v4/pkg/specgen"
@@ -288,10 +287,6 @@ func (r *Runtime) setupContainer(ctx context.Context, ctr *Container) (_ *Contai
 	if ctr.config.IsInfra {
 		ctr.config.StopTimeout = 10
 	}
-
-	// Inhibit shutdown until creation succeeds
-	shutdown.Inhibit()
-	defer shutdown.Uninhibit()
 
 	// Allocate a lock for the container
 	lock, err := r.lockManager.AllocateLock()
