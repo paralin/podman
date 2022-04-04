@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"runtime"
 	"sync"
 
-	"github.com/sirupsen/logrus"
 	"golang.org/x/sync/semaphore"
 )
 
@@ -23,6 +23,11 @@ var (
 	jobControlLock sync.RWMutex
 )
 
+func init() {
+	// initialize with the number of CPUs
+	_ = SetMaxThreads(uint(runtime.NumCPU()))
+}
+
 // SetMaxThreads sets the number of threads that will be used for parallel jobs.
 func SetMaxThreads(threads uint) error {
 	if threads == 0 {
@@ -34,8 +39,6 @@ func SetMaxThreads(threads uint) error {
 
 	numThreads = threads
 	jobControl = semaphore.NewWeighted(int64(threads))
-	logrus.Infof("Setting parallel job count to %d", threads)
-
 	return nil
 }
 
