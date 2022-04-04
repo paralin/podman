@@ -30,7 +30,6 @@ import (
 	"github.com/containers/podman/v4/libpod/events"
 	"github.com/containers/podman/v4/libpod/lock"
 	"github.com/containers/podman/v4/libpod/plugin"
-	"github.com/containers/podman/v4/libpod/shutdown"
 	"github.com/containers/podman/v4/pkg/rootless"
 	"github.com/containers/podman/v4/pkg/systemd"
 	"github.com/containers/podman/v4/pkg/util"
@@ -207,21 +206,6 @@ func newRuntimeFromConfig(ctx context.Context, conf *config.Config, options ...R
 		if err := opt(runtime); err != nil {
 			return nil, errors.Wrapf(err, "error configuring runtime")
 		}
-	}
-
-	if err := shutdown.Register("libpod", func(sig os.Signal) error {
-		// For `systemctl stop podman.service` support, exit code should be 0
-		if sig == syscall.SIGTERM {
-			os.Exit(0)
-		}
-		os.Exit(1)
-		return nil
-	}); err != nil && errors.Cause(err) != shutdown.ErrHandlerExists {
-		logrus.Errorf("Registering shutdown handler for libpod: %v", err)
-	}
-
-	if err := shutdown.Start(); err != nil {
-		return nil, errors.Wrapf(err, "error starting shutdown signal handler")
 	}
 
 	if err := makeRuntime(ctx, runtime); err != nil {
