@@ -479,6 +479,13 @@ func rootFlags(cmd *cobra.Command, podmanConfig *entities.PodmanConfig) {
 
 		pFlags.BoolVar(&podmanConfig.TransientStore, "transient-store", false, "Enable transient container storage")
 
+		noPivotFlagName := "no-pivot"
+		pFlags.BoolVar(
+			&podmanConfig.NoPivot,
+			noPivotFlagName, false,
+			"Disable the pivot_root syscall",
+		)
+
 		runtimeFlagName := "runtime"
 		pFlags.StringVar(&podmanConfig.RuntimePath, runtimeFlagName, podmanConfig.ContainersConfDefaultsRO.Engine.OCIRuntime, "Path to the OCI-compatible binary used to run containers.")
 		_ = cmd.RegisterFlagCompletionFunc(runtimeFlagName, completion.AutocompleteDefault)

@@ -43,6 +43,7 @@ type PodmanConfig struct {
 	Identity                 string         // ssh identity for connecting to server
 	MaxWorks                 int            // maximum number of parallel threads
 	MemoryProfile            string         // Hidden: Should memory profile be taken
+	NoPivot                  bool           // Set the no-pivot flag to disable pivot_root
 	RegistriesConf           string         // allows for specifying a custom registries.conf
 	Remote                   bool           // Connection to Podman API Service will use RESTful API
 	RuntimePath              string         // --runtime flag will set Engine.RuntimePath
