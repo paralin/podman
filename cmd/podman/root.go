@@ -464,6 +464,13 @@ func rootFlags(cmd *cobra.Command, podmanConfig *entities.PodmanConfig) {
 		pFlags.StringVar(&podmanConfig.Runroot, runrootFlagName, "", "Path to the 'run directory' where all state information is stored")
 		_ = cmd.RegisterFlagCompletionFunc(runrootFlagName, completion.AutocompleteDefault)
 
+		noPivotFlagName := "no-pivot"
+		pFlags.BoolVar(
+			&podmanConfig.NoPivot,
+			noPivotFlagName, false,
+			"Disable the pivot_root syscall",
+		)
+
 		runtimeFlagName := "runtime"
 		pFlags.StringVar(&podmanConfig.RuntimePath, runtimeFlagName, podmanConfig.ContainersConfDefaultsRO.Engine.OCIRuntime, "Path to the OCI-compatible binary used to run containers.")
 		_ = cmd.RegisterFlagCompletionFunc(runtimeFlagName, completion.AutocompleteDefault)

@@ -156,6 +156,9 @@ func getRuntime(ctx context.Context, fs *flag.FlagSet, opts *engineOpts) (*libpo
 	if len(storageOpts.RunRoot) > 50 {
 		return nil, errors.New("the specified runroot is longer than 50 characters")
 	}
+	if cfg.NoPivot {
+		options = append(options, libpod.WithNoPivotRoot())
+	}
 	if fs.Changed("storage-driver") {
 		storageSet = true
 		storageOpts.GraphDriverName = cfg.StorageDriver
